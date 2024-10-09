@@ -7,6 +7,7 @@ app.use(express.json());
 const products = []
 const secretKey = 'secretkey123';
 
+
 const limiter = rateLimit({
     windowsMs: 5 * 60 * 1000,
     limit: 10,

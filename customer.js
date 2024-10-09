@@ -8,6 +8,7 @@ app.use(express.json());
 const users = [];
 const secretKey = 'secretkey123';
 
+
 const limiter = rateLimit({
     windowMs: 5 * 60 * 1000,
     limit: 10,
