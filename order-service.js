@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const app = express();
 
 const authenticateToken = require('./middlewares/authMiddleware');
-const { validateNewOrdersInput, checkValidationResults, validateEditOrdersInput } = require('./middlewares/inputValidation');
+const { validateDeleteOrdersInput, validateNewOrdersInput, checkValidationResults, validateEditOrdersInput } = require('./middlewares/inputValidation');
 const rateLimit = require('./middlewares/rateLimiterMiddleware');
 const authPage = require('./middlewares/rbacMiddleware');
 
@@ -39,7 +39,7 @@ app.get('/orders/:id', authenticateToken, authPage(["admin", "customer"]), rateL
     }
 });
 
-app.post('/add-order', validateNewOrdersInput, checkValidationResults, rateLimit, (req, res) => {
+app.post('/add-order', validateNewOrdersInput, checkValidationResults, authPage(["admin", "customer"]), rateLimit, (req, res) => {
     const {customerID, productID, quantity } = req.body;
     const order = {
         id: orders.length + 1,
@@ -67,7 +67,7 @@ app.put('/update-order/:id', authenticateToken, authPage(["admin"]), rateLimit, 
     return res.status(200).json({ message: "Order updated successfully", order_id: order.id });
 });
 
-app.delete('/delete-order/:id', authenticateToken, authPage(["admin"]), rateLimit, (req, res) => {
+app.delete('/delete-order/:id', authenticateToken, authPage(["admin"]), validateDeleteOrdersInput, rateLimit, (req, res) => {
     const { id } = req.params;
     const order = orders.find(ord => ord.id === parseInt(id));
 
