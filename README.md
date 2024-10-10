@@ -36,6 +36,7 @@ node gateway.js
 ```
 https://localhost:3000
 ```
+**Step 4. Copy the JSON files:** Copy the `product.json`, `user.json`, `order.json` files from `JSON-FILES` folder and head to the Postman body section. Click raw and select JSON as the file type, then paste the copied content inside.
 
 ## Interacting with Microservices
 Once the gateway is running, use Postman to send requests to the respective services through the API Gateway. Below is an example of how to make requests to the services via the gateway.  
