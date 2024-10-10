@@ -1,7 +1,7 @@
 const { body, validationResult } = require('express-validator');
 
 const validateLoginInput = [
-    body('username').notEmpty().withMessage('Username is required'),
+    body('email').notEmpty().withMessage('email is required'),
     body('password').notEmpty().withMessage('Password is required'),
 ];
 
