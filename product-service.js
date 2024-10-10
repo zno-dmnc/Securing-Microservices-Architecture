@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const app = express();
 
 const authenticateToken = require('./middlewares/authMiddleware');
-const { validateProductInput, checkValidationResults } = require('./middlewares/inputValidation');
+const { validateDeleteOrdersInput, validateNewOrdersInput, checkValidationResults, validateEditOrdersInput } = require('./middlewares/inputValidation');
 const rateLimit = require('./middlewares/rateLimiterMiddleware');
 const authPage = require('./middlewares/rbacMiddleware');
 
@@ -20,65 +20,66 @@ const sslServer = https.createServer({
 
 app.use(express.json());
 
-const products = [];
+const orders = [];
 
-app.get('/products', authenticateToken, authPage(["admin", "customer"]), rateLimit, (req, res) => {
-    if (products.length === 0) {
-        return res.status(404).json({ message: 'No products found' });
+app.get('/orders', authenticateToken, authPage(["admin", "customer"]), rateLimit, (req, res) => {
+    if (orders.length === 0) {
+        return res.status(404).json({ message: 'No orders found' });
     } else {
-        return res.status(200).json({ data: products });
+        return res.status(200).json({ data: orders });
     }
 });
 
-app.get('/products/:id', authenticateToken, authPage(["admin", "customer"]), rateLimit, (req, res) => {
-    const product = products.find(prod => prod.id === parseInt(req.params.id));
-    if (!product) {
-        return res.status(404).json({ message: 'Product not found' });
+app.get('/orders/:id', authenticateToken, authPage(["admin", "customer"]), rateLimit, (req, res) => {
+    const order = orders.find(ord => ord.id === parseInt(req.params.id));
+    if (!order) {
+        return res.status(404).json({ message: 'Order not found' });
     } else {
-        return res.status(200).json({ data: product });
+        return res.status(200).json({ data: order });
     }
 });
 
-app.post('/add-product', validateProductInput, checkValidationResults, rateLimit, (req, res) => {
-    const { name, quantity } = req.body;
-    const product = {
-        id: products.length + 1,
-        name,
+app.post('/add-order', validateNewOrdersInput, checkValidationResults, authPage(["admin", "customer"]), rateLimit, (req, res) => {
+    const {customerID, productID, quantity } = req.body;
+    const order = {
+        id: orders.length + 1,
+        customerID,
+        productID,
         quantity
     };
 
-    products.push(product);
-    return res.status(201).json({ message: "Product added successfully", product_id: product.id, product_name: product.name });
+    orders.push(order);
+    return res.status(201).json({ message: "Order added successfully", order_id: order.id });
 });
 
-app.put('/update-product/:id', authenticateToken, authPage(["admin"]), rateLimit, (req, res) => {
+app.put('/update-order/:id', authenticateToken, authPage(["admin"]), rateLimit, validateEditOrdersInput, checkValidationResults, (req, res) => {
     const { id } = req.params;
-    const { name, quantity } = req.body;
-    const product = products.find(prod => prod.id === parseInt(id));
+    const { productID, quantity } = req.body;
+    const order = orders.find(ord => ord.id === parseInt(id));
 
-    if (!product) {
-        return res.status(404).json({ message: 'Product not found' });
+    if (!order) {
+        return res.status(404).json({ message: 'Order not found' });
     }
 
-    product.name = name;
-    product.quantity = quantity;
+    order.productID = productID;
+    order.quantity = quantity;
 
-    return res.status(200).json({ message: "Product updated successfully", product_id: product.id, product_name: product.name });
+    return res.status(200).json({ message: "Order updated successfully", order_id: order.id });
 });
 
-app.delete('/delete-product/:id', authenticateToken, authPage(["admin"]), rateLimit, (req, res) => {
+app.delete('/delete-order/:id', authenticateToken, authPage(["admin"]), validateDeleteOrdersInput, rateLimit, (req, res) => {
     const { id } = req.params;
-    const product = products.find(prod => prod.id === parseInt(id));
+    const order = orders.find(ord => ord.id === parseInt(id));
 
-    if (!product) {
-        return res.status(404).json({ message: 'Product not found' });
+    if (!order) {
+        return res.status(404).json({ message: 'Order not found' });
     }
 
-    products.splice(products.indexOf(product), 1);
-    return res.status(200).json({ message: "Product deleted successfully" });
+    orders.splice(orders.indexOf(order), 1);
+    return res.status(200).json({ message: "Order deleted successfully" });
 });
 
 
-sslServer.listen(3001, () => {
-    console.log('Product service started on port 3001');
+sslServer.listen(3003, () => {
+    console.log('Order service started on port 3003');
 });
