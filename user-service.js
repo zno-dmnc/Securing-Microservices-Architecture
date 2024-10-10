@@ -37,9 +37,15 @@ app.post('/login', validateLoginInput, checkValidationResults, rateLimit,async(r
     const { username, password} = req.body;
     const user = users.find(user => user.email === username);
 
-    if (!user || user.password !== password){
+    if (!user){
         return res.status(403).json({
-            error: "invalid login",
+            error: "no user found",
+        });
+    }
+
+    if(user.password !== password){
+        return res.status(403).json({
+            error: "incorrect password",
         });
     }
     
@@ -65,7 +71,7 @@ app.get('/all', authenticateToken, authPage(["admin"]), rateLimit, (req, res) =>
     }
 });
 
-app.get('/users/:id', authenticateToken, authPage(["admin"]), rateLimit,(req, res) => {
+app.get('/user/:id', authenticateToken, authPage(["admin"]), rateLimit,(req, res) => {
     const user = users.find(user => user.id === parseInt(req.params.id));
     if(!user) {
         return res.status(404).json({ message: 'User not found' });

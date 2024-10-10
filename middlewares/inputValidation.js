@@ -22,27 +22,14 @@ const validateProductEditInput = [
     body('quantity').isInt().withMessage('Product quantity must be an integer').trim().escape(),
 ];
 
-const validateDeleteProductInput = [
-    body('id').notEmpty().withMessage('Product ID is required').trim().escape(),
-    body('id').isInt().withMessage('Product ID must be an integer').trim().escape(),
-];
-
 const validateNewOrdersInput = [
-    body('customerID').notEmpty().withMessage('Customer ID is required').trim().escape(),
-    body('productID').notEmpty().withMessage('Product ID is required').trim().escape(),
+    body('customerId').notEmpty().withMessage('Customer ID is required').trim().escape(),
+    body('productId').notEmpty().withMessage('Product ID is required').trim().escape(),
     body('quantity').notEmpty().withMessage('Product Quantity is required').trim().escape(),
 ];
 
 const validateEditOrdersInput = [
-    body('customerID').notEmpty().withMessage('Customer ID is required').trim().escape(),
-    body('productID').notEmpty().withMessage('Product ID is required').trim().escape(),
-    body('quantity').notEmpty().withMessage('Product Quantity is required').trim().escape(),
-];
-
-
-const validateDeleteOrdersInput = [
-    body('id').notEmpty().withMessage('Order ID is required').trim().escape(),
-    body('id').isInt().withMessage('Order ID must be an integer').trim().escape(),
+    body('quantity').isInt().withMessage('Product quantity must be an integer').trim().escape(),   
 ];
 
 
@@ -63,7 +50,5 @@ module.exports = {
     validateNewOrdersInput,
     validateEditOrdersInput,
     validateProductEditInput,
-    validateDeleteProductInput,
-    validateDeleteOrdersInput,
     checkValidationResults,
 };
