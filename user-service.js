@@ -34,8 +34,8 @@ function generateAccessToken(user){
 }
 
 app.post('/login', validateLoginInput, checkValidationResults, rateLimit,async(req, res) => {
-    const { username, password} = req.body;
-    const user = users.find(user => user.email === username);
+    const { email, password} = req.body;
+    const user = users.find(user => user.email === email);
 
     if (!user){
         return res.status(403).json({
